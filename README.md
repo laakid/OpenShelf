@@ -1,4 +1,4 @@
-create 'lbms' database in mysql, then import lbms.php (database/lbms.php)
+create 'lbms' database in mysql, then import lbms.sql (database/lbms.php)
 
 To login as admin:
 email: admin@gmail.com
