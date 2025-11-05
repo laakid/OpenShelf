@@ -210,6 +210,23 @@ if ($_POST) {
             box-shadow: 0 2px 6px rgba(90, 74, 58, 0.1);
             animation: fadeIn 0.4s ease-in;
         }
+
+        footer {
+            background-color: white;
+            padding: 55px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            color: #666;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+        }
+
+        footer p {
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -235,8 +252,8 @@ if ($_POST) {
                 echo "<p style='color:red;'>$message</p>"; ?>
         </fieldset>
     </div>
-    <footer class="bg-white mt-12 py-6 shadow-inner">
-        <div class="container mx-auto px-4 text-center text-gray-600">
+    <footer>
+        <div>
             <p>&copy; <?php echo date('Y'); ?> Book Collection. All rights reserved.</p>
         </div>
     </footer>
