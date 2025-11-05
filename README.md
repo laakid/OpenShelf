@@ -1,5 +1,5 @@
 To login as admin:
-email: laaakid@gmail.com
+email: admin@gmail.com
 password: 123
 
 To login as user:
