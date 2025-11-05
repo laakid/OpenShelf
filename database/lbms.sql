@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 29, 2025 at 04:17 PM
+-- Generation Time: Nov 05, 2025 at 09:28 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -458,8 +458,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `username`, `email`, `password`, `created_at`, `is_active`, `role`) VALUES
-(1, 'admin', 'admin@gmail.com', '123', '2025-09-24 14:55:59', 1, 'admin'),
-(9, 'admin2', 'admin2@gmail.com', '123', '2025-10-14 14:08:00', 1, 'admin'),
+(1, 'akid', 'akid@gmail.com', '123', '2025-09-24 14:55:59', 1, 'admin'),
+(9, 'syaz', 'syaz@gmail.kom', '123', '2025-10-14 14:08:00', 1, 'admin'),
 (20, 'dummy', 'dummy@gmail.com', '123', '2025-10-28 07:53:50', 1, 'user'),
 (21, 'dummy2', 'dummy2@gmail.com', '123', '2025-10-29 09:56:59', 1, 'user');
 
@@ -471,13 +471,24 @@ INSERT INTO `users` (`UserID`, `username`, `email`, `password`, `created_at`, `i
 -- Indexes for table `books`
 --
 ALTER TABLE `books`
-  ADD PRIMARY KEY (`BookID`);
+  ADD PRIMARY KEY (`BookID`),
+  ADD KEY `cover_id` (`cover_id`);
+
+--
+-- Indexes for table `borrow`
+--
+ALTER TABLE `borrow`
+  ADD PRIMARY KEY (`BorrowID`),
+  ADD KEY `UserID` (`UserID`,`BookID`),
+  ADD KEY `BookID` (`BookID`);
 
 --
 -- Indexes for table `borrowed_books`
 --
 ALTER TABLE `borrowed_books`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`,`book_id`),
+  ADD KEY `book_id` (`book_id`);
 
 --
 -- Indexes for table `users`
@@ -508,6 +519,23 @@ ALTER TABLE `borrowed_books`
 --
 ALTER TABLE `users`
   MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `borrow`
+--
+ALTER TABLE `borrow`
+  ADD CONSTRAINT `borrow_ibfk_1` FOREIGN KEY (`BookID`) REFERENCES `books` (`BookID`);
+
+--
+-- Constraints for table `borrowed_books`
+--
+ALTER TABLE `borrowed_books`
+  ADD CONSTRAINT `borrowed_books_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `books` (`BookID`),
+  ADD CONSTRAINT `borrowed_books_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`UserID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
