@@ -390,20 +390,6 @@ INSERT INTO `books` (`BookID`, `title`, `author`, `cover_id`, `work_key`, `bookg
 -- --------------------------------------------------------
 
 --
--- Table structure for table `borrow`
---
-
-CREATE TABLE `borrow` (
-  `BorrowID` int(20) NOT NULL,
-  `UserID` int(20) NOT NULL,
-  `Borrow_Date` date NOT NULL,
-  `Return_Date` date NOT NULL,
-  `BookID` int(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `borrowed_books`
 --
 
