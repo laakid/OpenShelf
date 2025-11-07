@@ -259,7 +259,7 @@ $recentActivity = getRecentActivity();
                 <div>
                     <strong><?php echo $activity['title']; ?></strong><br>
                     <small><?php echo $activity['username']; ?> •
-                        <?php echo date('F j', strtotime($activity['Borrow_Date'])); ?></small>
+                        <?php echo date('F j', strtotime($activity['borrow_date'])); ?></small>
                 </div>
                 <span class="status <?php echo strtolower($activity['status']); ?>">
                     <?php echo ucfirst($activity['status']); ?>
