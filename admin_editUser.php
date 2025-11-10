@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $role = $_POST['role'];
 
-    updateByID($id, $username, $email, $password, $role); // ✅ pass role
+    updateByID($id, $username, $email, $password, $role);
     header('Location: manage_user.php');
     exit();
 }
