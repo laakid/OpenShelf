@@ -49,8 +49,8 @@ function updateByID($id, $username, $email, $password, $role){
 
 function deleteUserByID($id){
     global $conn;
-    $sql = "DELETE FROM users WHERE UserID = '$id'";
-    return $conn->query($sql);
+    $conn->query("DELETE FROM borrowed_books WHERE user_id = '$id'");
+    return $conn->query("DELETE FROM users WHERE UserID = '$id'");
 }
 
 function selectUserByID($id){
