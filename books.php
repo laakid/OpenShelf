@@ -338,7 +338,7 @@ if (!empty($query)) {
 
                             <!-- Borrow Button -->
                             <div class="mt-4">
-                                <?php if (in_array($book['status'], ['available', 'in-store'])): ?>
+                                <?php if (in_array($book['status'], ['Available', 'in-store'])): ?>
                                     <form method="POST" action="borrow_book.php">
                                         <input type="hidden" name="book_id" value="<?php echo $book['BookID']; ?>">
                                         <button type="submit"
