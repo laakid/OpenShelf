@@ -53,6 +53,7 @@ function deleteUserByID($id){
     return $conn->query("DELETE FROM users WHERE UserID = '$id'");
 }
 
+
 function selectUserByID($id){
     global $conn;
     $sql = "SELECT * FROM users WHERE UserID = '$id'";
@@ -168,15 +169,15 @@ function getBorrowedBooksByUser($userID){
 // OTHER FUNCTIONS
 function getRecentActivity($limit = 5) {
     global $conn;
-    $sql = "SELECT b.title, u.username, br.Borrow_Date, br.Return_Date,
+    $sql = "SELECT b.title, u.username, bb.borrow_date, bb.return_date,
                    CASE 
-                       WHEN br.Return_Date IS NULL THEN 'Issued'
+                       WHEN bb.return_date IS NULL THEN 'Issued'
                        ELSE 'Returned'
                    END AS status
-            FROM borrow br
-            JOIN books b ON br.BookID = b.BookID
-            JOIN users u ON br.UserID = u.UserID
-            ORDER BY br.Borrow_Date DESC
+            FROM borrowed_books bb
+            JOIN books b ON bb.book_id = b.BookID
+            JOIN users u ON bb.user_id = u.UserID
+            ORDER BY bb.borrow_date DESC
             LIMIT $limit";
     $result = $conn->query($sql);
     return $result->fetch_all(MYSQLI_ASSOC);
