@@ -47,6 +47,14 @@ function updateByID($id, $username, $email, $password, $role){
     return $stmt->execute();
 }
 
+function updateUserProfile($id, $username, $email, $password) {
+    global $conn;
+    $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, password = ? WHERE UserID = ?");
+    $stmt->bind_param("sssi", $username, $email, $password, $id);
+    return $stmt->execute();
+}
+
+
 function deleteUserByID($id){
     global $conn;
     $conn->query("DELETE FROM borrowed_books WHERE user_id = '$id'");
