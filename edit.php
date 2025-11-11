@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    if (updateByID($id, $username, $email, $password)) {
+    if (updateUserProfile($id, $username, $email, $password)) {
         header("Location: index.php");
         exit();
     } else {
