@@ -44,8 +44,8 @@ CREATE TABLE `books` (
 --
 
 INSERT INTO `books` (`BookID`, `title`, `author`, `cover_id`, `work_key`, `bookgenre`, `year_published`, `cover_filename`, `status`) VALUES
-(1, 'Sonnenfinsternis', 'Arthur Koestler', 368797, '/works/OL804246W', 'Programming', 'Unknown', '368797.jpg', 'borrowed'),
-(2, 'The science of getting rich, or, financial success through creative thought', 'Wallace D. Wattles', 854989, '/works/OL3792044W', 'Programming', 'Unknown', '854989.jpg', 'borrowed'),
+(1, 'Sonnenfinsternis', 'Arthur Koestler', 368797, '/works/OL804246W', 'Programming', 'Unknown', '368797.jpg', 'in-store'),
+(2, 'The science of getting rich, or, financial success through creative thought', 'Wallace D. Wattles', 854989, '/works/OL3792044W', 'Programming', 'Unknown', '854989.jpg', 'in-store'),
 (3, 'The Good Earth', 'Pearl S. Buck', 2626823, '/works/OL1140109W', 'Programming', 'Unknown', '2626823.jpg', 'borrowed'),
 (4, 'Arsène Lupin, gentleman-cambrioleur', 'Maurice Leblanc', 6125938, '/works/OL1064290W', 'Programming', 'Unknown', '6125938.jpg', 'in-store'),
 (5, 'The Voyage of the Dawn Treader', 'C.S. Lewis', 9184719, '/works/OL71132W', 'Programming', 'Unknown', '9184719.jpg', 'in-store'),
