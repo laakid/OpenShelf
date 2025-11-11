@@ -460,15 +460,7 @@ ALTER TABLE `books`
   ADD PRIMARY KEY (`BookID`),
   ADD KEY `cover_id` (`cover_id`);
 
---
--- Indexes for table `borrow`
---
-ALTER TABLE `borrow`
-  ADD PRIMARY KEY (`BorrowID`),
-  ADD KEY `UserID` (`UserID`,`BookID`),
-  ADD KEY `BookID` (`BookID`);
-
---
+  
 -- Indexes for table `borrowed_books`
 --
 ALTER TABLE `borrowed_books`
