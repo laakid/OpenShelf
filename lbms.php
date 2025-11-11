@@ -1,186 +1,302 @@
 <?php
+session_start();
 
-$host = '127.0.0.1';
-$dbname = 'lbms';
-$username = 'root';
-$password = '';
+require 'lbms.php';
 
-$conn = new mysqli($host, $username, $password, $dbname);
-
-if ($conn->connect_error){
-    die("Connection failed: " . $conn->connect_error);
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || !isset($_SESSION['UserID'])) {
+    header("Location: login.php");
+    exit();
 }
 
-// ADMIN FUNCTION
-function getAllUsers() {
-    global $conn;
-    $sql = "SELECT * FROM users";
-    $result = $conn->query($sql);
-    return $result->fetch_all(MYSQLI_ASSOC);
-}
-// USER FUNCTION
-
-function register($username, $email, $password){
-    global $conn;
-
-    // check if username already exists
-    $check = $conn->query("SELECT * FROM users WHERE username='$username'");
-    if ($check->num_rows > 0) {
-        return false; // user exists, skip insertion
-    }
-
-    $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
-    return $conn->query($sql);
-}
-
-function login($email, $password){
-    global $conn;
-    $sql = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
-    $result = $conn->query($sql);
-    return $result->fetch_assoc();
-}
-
-function updateByID($id, $username, $email, $password, $role){
-    global $conn;
-    $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, password = ?, role = ? WHERE UserID = ?");
-    $stmt->bind_param("ssssi", $username, $email, $password, $role, $id);
-    return $stmt->execute();
-}
-
-function deleteUserByID($id){
-    global $conn;
-    $conn->query("DELETE FROM borrowed_books WHERE user_id = '$id'");
-    return $conn->query("DELETE FROM users WHERE UserID = '$id'");
-}
-
-
-function selectUserByID($id){
-    global $conn;
-    $sql = "SELECT * FROM users WHERE UserID = '$id'";
-    $result = $conn->query($sql);
-    return $result->fetch_assoc();    
-}
-function countMembers() {
-    global $conn;
-    $result = $conn->query("SELECT COUNT(*) AS members FROM users WHERE role = 'user'");
-    return $result->fetch_assoc()['members'];
-}
-// BOOK FUNCTIONS
-
-function AddBooks($title, $genre, $author, $year, $coverName) {
-    global $conn;
-    $sql = "INSERT INTO books (title, bookgenre, author, year_published, cover_filename, status)
-            VALUES ('$title', '$genre', '$author', '$year', '$coverName', 'in-store')";
-    return $conn->query($sql);
-}
-
-
-function deleteBook($BookID){
-    global $conn;
-    $sql = "DELETE FROM books WHERE BookID = '$BookID'";
-    return $conn->query($sql);
-}
-
-function selectAllBooks() {
-    global $conn;
-    $sql = "SELECT * FROM books";
-    $result = $conn->query($sql);
-    return $result->fetch_all(MYSQLI_ASSOC);
-}
-
-function queryBook($query) {
-    global $conn;
-    $sql = "SELECT * FROM books WHERE title LIKE '%$query%'";
-    $result = $conn->query($sql);
-    return $result->fetch_all(MYSQLI_ASSOC);
-}
-function selectBookByID($id) {
-    global $conn;
-    $sql = "SELECT * FROM books WHERE BookID = '$id'";
-    $result = $conn->query($sql);
-    return $result->fetch_assoc();
-}
-
-function updateBookByID($id, $title, $genre, $author, $year, $coverName = null) {
-    global $conn;
-
-    $sql = "UPDATE books SET 
-                title = '$title',
-                bookgenre = '$genre',
-                author = '$author',
-                year_published = '$year'";
-
-    if ($coverName) {
-        $sql .= ", cover_filename = '$coverName'";
-    }
-
-    $sql .= " WHERE BookID = '$id'";
-    return $conn->query($sql);
-}
-
-
-function countTotalBooks() {
-    global $conn;
-    $result = $conn->query("SELECT COUNT(*) AS total FROM books");
-    return $result->fetch_assoc()['total'];
-}
-
-function countAvailableBooks() {
-    global $conn;
-    $result = $conn->query("SELECT COUNT(*) AS available FROM books WHERE status = 'in-store'");
-    return $result->fetch_assoc()['available'];
-}
-
-function countBorrowedBooks() {
-    global $conn;
-    $result = $conn->query("SELECT COUNT(*) AS borrowed FROM books WHERE status = 'borrowed'");
-    return $result->fetch_assoc()['borrowed'];
-}
-
-function borrowBook($userID, $bookID) {
-    global $conn;
-    $sql = "INSERT INTO borrowed_books (user_id, book_id, borrow_date) VALUES ('$userID', '$bookID', NOW())";
-    return $conn->query($sql);
-}
-
-function updateBookStatus($bookID, $status) {
-    global $conn;
-    $sql = "UPDATE books SET status = '$status' WHERE BookID = '$bookID'";
-    return $conn->query($sql);
-}
-
-function returnBook($bookID, $userID) {
-    global $conn;
-    $conn->query("UPDATE borrowed_books SET return_date = NOW() WHERE book_id = '$bookID' AND user_id = '$userID' AND return_date IS NULL");
-    return updateBookStatus($bookID, 'in-store');
-}
-
-function getBorrowedBooksByUser($userID){
-    global $conn;
-    $sql = "SELECT b.BookID, b.title, b.cover_filename, bb.borrow_date, bb.return_date
-            FROM borrowed_books bb
-            JOIN books b ON bb.book_id = b.BookID
-            WHERE bb.user_id = '$userID' AND bb.return_date IS NULL";
-    $result = $conn->query($sql);
-    return $result->fetch_all(MYSQLI_ASSOC);
-}
-
-
-// OTHER FUNCTIONS
-function getRecentActivity($limit = 5) {
-    global $conn;
-    $sql = "SELECT b.title, u.username, bb.borrow_date, bb.return_date,
-                   CASE 
-                       WHEN bb.return_date IS NULL THEN 'Issued'
-                       ELSE 'Returned'
-                   END AS status
-            FROM borrowed_books bb
-            JOIN books b ON bb.book_id = b.BookID
-            JOIN users u ON bb.user_id = u.UserID
-            ORDER BY bb.borrow_date DESC
-            LIMIT $limit";
-    $result = $conn->query($sql);
-    return $result->fetch_all(MYSQLI_ASSOC);
-}
+$totalBooks = countTotalBooks();
+$availableBooks = countAvailableBooks();
+$borrowedBooks = countBorrowedBooks();
+$memberCount = countMembers();
+$recentActivity = getRecentActivity();
 
 ?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        nav ul {
+            background-color: #f7e3c2ff;
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #000000ff;
+            font-weight: bold;
+            padding: 8px 16px;
+            display: block;
+        }
+
+        nav ul li a:hover {
+            background-color: #eddbb8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        .card {
+            background: white;
+            padding: 45px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card h2 {
+            color: #6b5b4f;
+            margin-bottom: 10px;
+        }
+
+        /* Stats Section */
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            padding: 45px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            color: #6b5b4f;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            color: #666;
+        }
+
+        /* Quick Actions */
+        .actions {
+            background: white;
+            padding: 70px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .actions h2 {
+            color: #6b5b4f;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 20px 50px;
+            background: #6b5b4f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 18px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background: #554739;
+            transform: translateY(-2px);
+        }
+
+        /* Recent Activity */
+        .recent {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .recent h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .activity-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .issued {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .returned {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        footer {
+            background: white;
+            padding: 45px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            margin-top: auto;
+        }
+
+        footer p {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>OpenShelf</h1>
+        <nav>
+            <ul>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="about.php">About</a></li>
+                <li><a href="books.php">Books</a></li>
+                <li><a href="my_books.php">My Books</a></li>
+                <li><a href="logout.php">Log Out</a></li>
+                <li><a href="edit.php">Edit Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Welcome to OpenShelf!</h2>
+            <p>Manage, Borrow, and Return your books efficiently</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats">
+            <div class="stat-card">
+                <h3><?php echo $totalBooks; ?></h3>
+                <p>Total Books</p>
+            </div>
+            <div class="stat-card">
+                <h3><?php echo $availableBooks; ?></h3>
+                <p>Available</p>
+            </div>
+            <div class="stat-card">
+                <h3><?php echo $borrowedBooks; ?></h3>
+                <p>Borrowed</p>
+            </div>
+            <div class="stat-card">
+                <h3><?php echo $memberCount; ?></h3>
+                <p>Members</p>
+            </div>
+        </div>
+
+
+
+        <!-- Quick Actions -->
+        <div class="actions">
+            <h2>Quick Actions</h2>
+            <div class="action-buttons">
+                <a href="books.php" class="btn">Borrow Book</a>
+                <a href="my_books.php" class="btn">Return Book</a>
+
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <?php foreach ($recentActivity as $activity): ?>
+            <div class="activity-item">
+                <div>
+                    <strong><?php echo $activity['title']; ?></strong><br>
+                    <small><?php echo $activity['username']; ?> •
+                        <?php echo date('F j', strtotime($activity['borrow_date'])); ?></small>
+                </div>
+                <span class="status <?php echo strtolower($activity['status']); ?>">
+                    <?php echo ucfirst($activity['status']); ?>
+                </span>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <footer>
+        <p>&copy; <?php echo date('Y'); ?> Book Collection. All rights reserved.</p>
+    </footer>
+            
+</body>
+
+
+</html>
