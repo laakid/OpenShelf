@@ -42,16 +42,14 @@ function login($email, $password){
 
 function updateByID($id, $username, $email, $password, $role){
     global $conn;
-    $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, password = ?, role = ? WHERE UserID = ?");
-    $stmt->bind_param("ssssi", $username, $email, $password, $role, $id);
-    return $stmt->execute();
+    $query = "UPDATE users SET username = '$username', email = '$email', password = '$password', role = '$role' WHERE UserID = $id";
+    return $conn->query($query);
 }
 
 function updateUserProfile($id, $username, $email, $password) {
     global $conn;
-    $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, password = ? WHERE UserID = ?");
-    $stmt->bind_param("sssi", $username, $email, $password, $id);
-    return $stmt->execute();
+    $query = "UPDATE users SET username = '$username', email = '$email', password = '$password' WHERE UserID = $id";
+    return $conn->query($query);
 }
 
 
@@ -188,7 +186,7 @@ function getRecentActivity($limit = 5) {
     global $conn;
     $sql = "SELECT b.title, u.username, bb.borrow_date, bb.return_date,
                    CASE 
-                       WHEN bb.return_date IS NULL THEN 'Issued'
+                       WHEN bb.return_date IS NULL THEN 'borrowed'
                        ELSE 'Returned'
                    END AS status
             FROM borrowed_books bb
