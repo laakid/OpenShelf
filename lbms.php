@@ -57,9 +57,18 @@ function updateUserProfile($id, $username, $email, $password) {
 
 function deleteUserByID($id){
     global $conn;
+
+    $sql = "SELECT book_id FROM borrowed_books WHERE user_id = '$id' AND return_date IS NULL";
+    $result = $conn->query($sql);
+    while ($row = $result->fetch_assoc()) {
+        $bookID = $row['book_id'];
+        updateBookStatus($bookID, 'in-store');
+    }
+
     $conn->query("DELETE FROM borrowed_books WHERE user_id = '$id'");
     return $conn->query("DELETE FROM users WHERE UserID = '$id'");
 }
+
 
 
 function selectUserByID($id){
