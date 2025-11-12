@@ -46,7 +46,7 @@ CREATE TABLE `books` (
 INSERT INTO `books` (`BookID`, `title`, `author`, `cover_id`, `work_key`, `bookgenre`, `year_published`, `cover_filename`, `status`) VALUES
 (1, 'Sonnenfinsternis', 'Arthur Koestler', 368797, '/works/OL804246W', 'Programming', 'Unknown', '368797.jpg', 'in-store'),
 (2, 'The science of getting rich, or, financial success through creative thought', 'Wallace D. Wattles', 854989, '/works/OL3792044W', 'Programming', 'Unknown', '854989.jpg', 'in-store'),
-(3, 'The Good Earth', 'Pearl S. Buck', 2626823, '/works/OL1140109W', 'Programming', 'Unknown', '2626823.jpg', 'borrowed'),
+(3, 'The Good Earth', 'Pearl S. Buck', 2626823, '/works/OL1140109W', 'Programming', 'Unknown', '2626823.jpg', 'in-store'),
 (4, 'Arsène Lupin, gentleman-cambrioleur', 'Maurice Leblanc', 6125938, '/works/OL1064290W', 'Programming', 'Unknown', '6125938.jpg', 'in-store'),
 (5, 'The Voyage of the Dawn Treader', 'C.S. Lewis', 9184719, '/works/OL71132W', 'Programming', 'Unknown', '9184719.jpg', 'in-store'),
 (6, 'Идіотъ', 'Фёдор Михайлович Достоевский', 9412225, '/works/OL166973W', 'Programming', 'Unknown', '9412225.jpg', 'in-store'),
@@ -406,22 +406,7 @@ CREATE TABLE `borrowed_books` (
 --
 
 INSERT INTO `borrowed_books` (`id`, `user_id`, `book_id`, `borrow_date`, `return_date`) VALUES
-(1, 20, 1, '2025-10-29 09:27:23', '2025-10-29 09:52:53'),
-(2, 20, 1, '2025-10-29 09:56:36', '2025-10-29 10:15:09'),
-(3, 20, 2, '2025-10-29 09:56:38', '2025-10-29 10:15:12'),
-(4, 20, 1, '2025-10-29 10:15:18', '2025-10-29 10:15:20'),
-(5, 20, 1, '2025-10-29 10:15:26', '2025-10-29 10:15:31'),
-(6, 20, 2, '2025-10-29 10:15:27', '2025-10-29 10:15:32'),
-(7, 20, 5, '2025-10-29 10:17:11', '2025-10-29 10:17:16'),
-(8, 20, 1, '2025-10-29 10:19:31', '2025-10-29 10:19:36'),
-(9, 20, 1, '2025-10-29 12:46:01', '2025-10-29 16:09:27'),
-(10, 20, 2, '2025-10-29 14:17:46', '2025-10-29 16:09:40'),
-(11, 20, 3, '2025-10-29 14:17:47', '2025-10-29 16:19:11'),
-(12, 20, 4, '2025-10-29 14:17:48', '2025-10-29 16:19:16'),
-(13, 20, 5, '2025-10-29 16:08:25', '2025-10-29 16:19:18'),
-(14, 20, 1, '2025-10-29 16:20:05', NULL),
-(15, 20, 2, '2025-10-29 16:20:06', NULL),
-(16, 20, 3, '2025-10-29 16:20:07', NULL);
+
 
 -- --------------------------------------------------------
 
