@@ -199,7 +199,7 @@ $recentActivity = getRecentActivity();
             font-weight: bold;
         }
 
-        .issued {
+        .borrowed {
             background: #fff3cd;
             color: #856404;
         }
